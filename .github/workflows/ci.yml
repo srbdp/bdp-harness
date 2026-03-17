@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Security audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Secrets scan
+        run: |
+          echo "Scanning for hardcoded secrets..."
+          FOUND=0
+          for dir in src/ lib/ app/; do
+            if [ -d "$dir" ]; then
+              if grep -rn -E 'AKIA[A-Z0-9]{16}|sk-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{36}|-----BEGIN.*PRIVATE KEY' "$dir"; then
+                FOUND=1
+              fi
+            fi
+          done
+          if [ "$FOUND" -eq 1 ]; then
+            echo "::error::Potential secrets found in source files!"
+            exit 1
+          fi
+          echo "No secrets detected."
