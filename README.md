@@ -25,6 +25,7 @@ Clone this template, customize `CLAUDE.md` for your project, and start building.
 - **Rules** — Conditional context that loads only when relevant files are touched
 - **Hooks** — Deterministic enforcement (auto-formatting, type checking, git safety) that can't be bypassed
 - **Worktree workflow** — Every change happens in isolation, reviewed before merging to main
+- **Layer enforcement** — Declare architectural boundaries in `layers.json`, violations are caught automatically by structural tests
 - **`/improve` skill** — Closed-loop optimization inspired by Karpathy's autoresearch
 - **Quality tracking** — Scorecard and learnings log to manage entropy over time
 
@@ -62,9 +63,23 @@ This is the agent's constitution — it reads this file before every task. Open 
 
 The agent reads `inputs/` to understand what to build. Drop in your PRD, product specs, or design briefs. For structured specs with acceptance criteria, use `docs/specs/`.
 
-### 5. Write your architecture in `docs/ARCHITECTURE.md`
+### 5. Define your architecture
 
-The agent reads this before making structural changes. Document your system components, data flow, and key boundaries. Even a rough sketch helps — the agent will respect whatever constraints you document.
+Two things to set up — one for humans, one for machines:
+
+**For the agent (prose):** Write `docs/ARCHITECTURE.md` — system components, data flow, key boundaries. Even a rough sketch helps. The agent reads this before making structural changes.
+
+**For the test runner (machine):** Create `layers.json` to enforce import boundaries automatically. Either:
+
+```bash
+# Option A: Let the architect agent analyze your codebase and generate it
+claude -a architect "define layers"
+
+# Option B: Copy the example and customize manually
+cp layers.json.example layers.json
+```
+
+Once `layers.json` exists, `tests/structural/layers.test.ts` activates automatically — any import that crosses a layer boundary in the wrong direction fails the test with a remediation message. No `layers.json` = no enforcement (tests skip gracefully).
 
 ### 6. Customize rules for your stack
 
@@ -112,6 +127,7 @@ This is the pattern for every code change: worktree → test → implement → r
 | `.prettierrc` | Code formatting config (enforced by hooks) |
 | `.gitignore` | Standard ignores for Node.js projects |
 | `init.sh` | Setup validator — checks environment and project configuration |
+| `layers.json.example` | Layer boundary config template — copy to `layers.json` to activate enforcement |
 
 ### `.claude/` — Harness Configuration
 | File | Purpose |
@@ -128,6 +144,7 @@ This is the pattern for every code change: worktree → test → implement → r
 | `skills/improve/` | Closed-loop optimization skill with protocol and metrics references |
 | `agents/security-reviewer.md` | Security-focused code review subagent |
 | `agents/doc-gardener.md` | Documentation staleness auditor (run: `claude -a doc-gardener`) |
+| `agents/architect.md` | Layer boundary analyzer (run: `claude -a architect "define layers"`) |
 
 ### `docs/` — Living Documentation
 | File | Purpose |
@@ -152,7 +169,7 @@ Your PRD, product specs, and design briefs. The agent reads these to understand 
 | `unit/` | Unit tests (co-located: `feature.ts` → `feature.test.ts`) |
 | `e2e/` | End-to-end tests |
 | `fixtures/` | Shared test data and mocks |
-| `structural/` | Architecture boundary tests (`.template.ts` → `.test.ts` to activate) |
+| `structural/` | Architecture boundary tests — auto-enforces `layers.json` when present |
 
 ### `.github/` — GitHub Configuration
 | File | Purpose |
@@ -202,6 +219,7 @@ See `.claude/skills/improve/references/` for the full protocol and metrics guide
 - **Add rules** in `.claude/rules/` — unconditional (always loaded) or path-scoped (loaded when matching files are touched)
 - **Add hooks** in `.claude/settings.json` — format, lint, block operations
 - **Add subagents** in `.claude/agents/` — specialized reviewers for your domain
+- **Enforce boundaries** — edit `layers.json` to add/remove layers, or run `claude -a architect "check boundaries"` to validate
 - **Audit docs** with `claude -a doc-gardener "audit all docs"` — finds stale paths, outdated commands, broken references
 - **Add skills** in `.claude/skills/` — multi-step workflows for recurring tasks
 - **Track quality** in `docs/QUALITY_SCORECARD.md` — grade each domain, target weak areas with `/improve`

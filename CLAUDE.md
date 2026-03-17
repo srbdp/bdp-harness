@@ -29,6 +29,7 @@ Design decisions and constraints: `docs/DESIGN_DECISIONS.md`
 ### Architecture & Decisions
 - `docs/ARCHITECTURE.md` — System design and component map. Read before making structural changes; update when the architecture evolves.
 - `docs/DESIGN_DECISIONS.md` — Non-obvious constraints and rationale. Update when you make a surprising or non-obvious choice.
+- `layers.json` — Machine-enforced layer boundaries. Defines which layers can depend on which. Enforced by `tests/structural/layers.test.ts`. Generate with `claude -a architect "define layers"` or copy from `layers.json.example`.
 
 ### Quality & Learning
 - `docs/QUALITY_SCORECARD.md` — Quality grades by domain (test coverage, type safety, etc.). Review periodically; target weak areas with `/improve`.
@@ -44,7 +45,7 @@ Design decisions and constraints: `docs/DESIGN_DECISIONS.md`
 - `tests/unit/` — Unit tests, co-located pattern: `feature.ts` → `feature.test.ts`
 - `tests/e2e/` — End-to-end tests
 - `tests/fixtures/` — Shared test data
-- `tests/structural/` — Architecture boundary tests (rename `.template.ts` → `.test.ts` to activate)
+- `tests/structural/` — Architecture boundary tests (auto-enforces `layers.json` when present)
 
 ### Harness Configuration
 - `.claude/settings.json` — Hooks (format, typecheck, git safety)
@@ -52,6 +53,7 @@ Design decisions and constraints: `docs/DESIGN_DECISIONS.md`
 - `.claude/skills/improve/` — Closed-loop optimization skill
 - `.claude/agents/security-reviewer.md` — Security-focused code review agent
 - `.claude/agents/doc-gardener.md` — Documentation staleness auditor (invoke: `claude -a doc-gardener`)
+- `.claude/agents/architect.md` — Layer boundary analyzer (invoke: `claude -a architect "define layers"`)
 
 ## Available Tools
 
@@ -64,6 +66,8 @@ Design decisions and constraints: `docs/DESIGN_DECISIONS.md`
 
 ### Agents
 - `security-reviewer` — Security-focused code review. Runs automatically or on demand.
+- `doc-gardener` — Documentation staleness auditor. Runs on demand.
+- `architect` — Analyzes codebase and generates/validates `layers.json` for boundary enforcement.
 - Agent teams — For larger tasks, spawn a team where each builder gets its own worktree.
 
 ## Working with Plans

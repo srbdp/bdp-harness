@@ -1,0 +1,18 @@
+{
+  "_comment": "Define your architectural layers and allowed dependencies. See tests/structural/layers.test.ts for enforcement. Copy this file to layers.json to activate.",
+  "layers": [
+    { "name": "types", "paths": ["src/types/**"] },
+    { "name": "config", "paths": ["src/config/**"] },
+    { "name": "data", "paths": ["src/data/**", "src/repo/**", "src/db/**"] },
+    { "name": "services", "paths": ["src/services/**"] },
+    { "name": "ui", "paths": ["src/components/**", "src/app/**", "src/pages/**"] }
+  ],
+  "allowedDependencies": {
+    "types": [],
+    "config": ["types"],
+    "data": ["types", "config"],
+    "services": ["types", "config", "data"],
+    "ui": ["types", "config", "services"]
+  },
+  "crossCutting": ["src/lib/**", "src/utils/**", "src/shared/**"]
+}

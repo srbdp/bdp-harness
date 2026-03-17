@@ -22,6 +22,17 @@ User → Frontend → API Routes → Service Layer → Database
                               External APIs
 ```
 
+## Layer Boundaries
+
+If your project has a `layers.json` at the root, dependency directions are enforced
+automatically by `tests/structural/layers.test.ts`. Run the architect agent to
+generate an initial config:
+
+    claude -a architect "define layers"
+
+See `layers.json.example` for the format. The structural test will block any import
+that crosses a layer boundary in the wrong direction.
+
 ## Dependency Rules
 [What can depend on what. Keep it simple:]
 

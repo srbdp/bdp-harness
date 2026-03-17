@@ -100,6 +100,17 @@ else
   todo "tsconfig.json not found — needed for typecheck hook"
 fi
 
+# ── Architecture ──
+
+echo ""
+echo -e "${BOLD}Architecture${RESET}"
+
+if [[ -f layers.json ]]; then
+  ok "layers.json defined — architectural boundaries will be enforced"
+else
+  todo "No layers.json — run 'claude -a architect \"define layers\"' to set up boundary enforcement"
+fi
+
 # ── Inputs ──
 
 echo ""
