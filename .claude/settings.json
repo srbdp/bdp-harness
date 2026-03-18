@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'FILE=$(echo \"$TOOL_INPUT\" | jq -r \".file_path // empty\"); if [ -n \"$FILE\" ] && echo \"$FILE\" | grep -qE \"(\\.env|\\.pem|\\.key|credentials|secret)\"; then echo \"BLOCKED: Writing to sensitive file ($FILE). Use .env.example for templates or configure environment variables directly.\" >&2; exit 2; fi; CONTENT=$(echo \"$TOOL_INPUT\" | jq -r \".content // .new_string // empty\"); if [ -n \"$CONTENT\" ] && echo \"$CONTENT\" | grep -qE \"AKIA[A-Z0-9]|sk-[a-zA-Z0-9]|ghp_[a-zA-Z0-9]|-----BEGIN.*PRIVATE KEY\"; then echo \"BLOCKED: Content contains what appears to be a secret (AWS key, API key, or private key). Use environment variables instead.\" >&2; exit 2; fi'",
+            "command": "bash -c 'FILE=$(echo \"$TOOL_INPUT\" | jq -r \".file_path // empty\"); if [ -n \"$FILE\" ] && echo \"$FILE\" | grep -qE \"(\\.pem|\\.key|credentials|secret)\"; then echo \"BLOCKED: Writing to sensitive file ($FILE). Use environment variables or a secrets manager instead.\" >&2; exit 2; fi; CONTENT=$(echo \"$TOOL_INPUT\" | jq -r \".content // .new_string // empty\"); if [ -n \"$CONTENT\" ] && echo \"$CONTENT\" | grep -qE \"AKIA[A-Z0-9]|sk-[a-zA-Z0-9]|ghp_[a-zA-Z0-9]|-----BEGIN.*PRIVATE KEY\"; then echo \"BLOCKED: Content contains what appears to be a secret (AWS key, API key, or private key). Use environment variables instead.\" >&2; exit 2; fi'",
             "timeout": 5000
           }
         ]

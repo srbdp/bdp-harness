@@ -225,6 +225,17 @@ See `.claude/skills/improve/references/` for the full protocol and metrics guide
 - **Track quality** in `docs/QUALITY_SCORECARD.md` — grade each domain, target weak areas with `/improve`
 - **Log learnings** in `docs/LEARNINGS.md` — every failure becomes a permanent fix
 
+## Related Repositories
+
+This harness is part of a family of Claude Code harnesses, each tailored to a different stack:
+
+| Repo | Stack | Description |
+|------|-------|-------------|
+| [bdp-harness](https://github.com/srbdp/bdp-harness) (this repo) | Framework-agnostic | Base harness template — hooks, rules, agents, workflow. Fork this to create harnesses for other stacks. |
+| [lovable-harness](https://github.com/srbdp/lovable-harness) | React + Vite + Tailwind + shadcn/ui + Supabase | Opinionated harness for Lovable-style full-stack web apps |
+
+All harnesses share the same core patterns (hooks, rules, agents, worktree workflow, structural tests) but differ in stack-specific rules, scaffold code, and enforcement hooks.
+
 ## Inspirations
 
 - [OpenAI Harness Engineering](https://openai.com/index/harness-engineering/) — Repo as system of record, progressive disclosure, entropy management
